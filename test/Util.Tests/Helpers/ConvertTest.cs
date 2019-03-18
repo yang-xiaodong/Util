@@ -1,4 +1,5 @@
 ﻿using System;
+using Util.Tests.Samples;
 using Xunit;
 
 namespace Util.Tests.Helpers {
@@ -328,11 +329,11 @@ namespace Util.Tests.Helpers {
         /// </summary>
         [Fact]
         public void TestToGuidList() {
-            Assert.Equal( 0, Util.Helpers.Convert.ToGuidList( null ).Count );
-            Assert.Equal( 0, Util.Helpers.Convert.ToGuidList( "" ).Count );
+            Assert.Empty( Util.Helpers.Convert.ToGuidList( null ));
+            Assert.Empty( Util.Helpers.Convert.ToGuidList( "" ));
 
             const string guid = "83B0233C-A24F-49FD-8083-1337209EBC9A";
-            Assert.Equal( 1, Util.Helpers.Convert.ToGuidList( guid ).Count );
+            Assert.Single( Util.Helpers.Convert.ToGuidList( guid ));
             Assert.Equal( new Guid( guid ), Util.Helpers.Convert.ToGuidList( guid )[0] );
 
             const string guid2 = "83B0233C-A24F-49FD-8083-1337209EBC9A,EAB523C6-2FE7-47BE-89D5-C6D440C3033A";
@@ -357,8 +358,8 @@ namespace Util.Tests.Helpers {
         /// </summary>
         [Fact]
         public void TestToList() {
-            Assert.Equal( 0, Util.Helpers.Convert.ToList<string>( null ).Count );
-            Assert.Equal( 1, Util.Helpers.Convert.ToList<string>( "1" ).Count );
+            Assert.Empty( Util.Helpers.Convert.ToList<string>( null ));
+            Assert.Single( Util.Helpers.Convert.ToList<string>( "1" ));
             Assert.Equal( 2, Util.Helpers.Convert.ToList<string>( "1,2" ).Count );
             Assert.Equal( 2, Util.Helpers.Convert.ToList<int>( "1,2" )[1] );
         }
@@ -387,6 +388,9 @@ namespace Util.Tests.Helpers {
             Assert.True( Util.Helpers.Convert.To<bool>( "true" ) );
             Assert.Equal( new DateTime( 2000, 1, 1 ), Util.Helpers.Convert.To<DateTime>( "2000-1-1" ) );
             Assert.Equal( new DateTime( 2000, 1, 1 ), Util.Helpers.Convert.To<DateTime?>( "2000-1-1" ) );
+            var guid = Guid.NewGuid();
+            Assert.Equal( guid.ToString(), Util.Helpers.Convert.To<string>( guid ) );
+            Assert.Equal( EnumSample.C, Util.Helpers.Convert.To<EnumSample>( "c" ) );
         }
     }
 }

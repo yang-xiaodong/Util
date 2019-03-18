@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,6 +12,14 @@ namespace Util.Tests.Samples {
     /// </summary>
     [Description( "测试样例" )]
     public class Sample : ISample {
+        /// <summary>
+        /// 初始化测试样例
+        /// </summary>
+        public Sample() {
+            StringList = new List<string>();
+            StringArray = StringList.ToArray();
+        }
+
         /// <summary>
         /// 测试值
         /// </summary>
@@ -130,6 +139,18 @@ namespace Util.Tests.Samples {
         /// 可空long值
         /// </summary>
         public long? NullableLongValue { get; set; }
+        /// <summary>
+        /// 字符串列表
+        /// </summary>
+        public List<string> StringList { get; set; }
+        /// <summary>
+        /// 字符串数据
+        /// </summary>
+        public string[] StringArray { get; set; }
+        /// <summary>
+        /// Guid值
+        /// </summary>
+        public Guid GuidValue { get; set; }
 
         /// <summary>
         /// 测试2

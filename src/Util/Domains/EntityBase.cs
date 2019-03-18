@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Util.Helpers;
+using Util.Sessions;
 using Util.Validations;
 
 namespace Util.Domains {
@@ -33,7 +35,7 @@ namespace Util.Domains {
         /// <summary>
         /// 标识
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Id不能为空")]
         [Key]
         public TKey Id { get; private set; }
 
@@ -41,7 +43,7 @@ namespace Util.Domains {
         /// 相等运算
         /// </summary>
         public override bool Equals( object other ) {
-            return this == (EntityBase<TEntity, TKey>)other;
+            return this == ( other as EntityBase<TEntity, TKey> );
         }
 
         /// <summary>
@@ -77,7 +79,7 @@ namespace Util.Domains {
         /// 初始化
         /// </summary>
         public virtual void Init() {
-            if( Id.Equals( default( TKey ) ) )
+            if( string.IsNullOrWhiteSpace( Id.SafeString() ) || Id.Equals( default( TKey ) ) )
                 Id = CreateId();
         }
 
@@ -87,6 +89,11 @@ namespace Util.Domains {
         protected virtual TKey CreateId() {
             return Util.Helpers.Convert.To<TKey>( Guid.NewGuid() );
         }
+
+        /// <summary>
+        /// 用户会话
+        /// </summary>
+        protected virtual ISession Session => Ioc.Create<ISession>();
 
         /// <summary>
         /// 验证

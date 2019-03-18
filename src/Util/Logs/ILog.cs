@@ -1,4 +1,5 @@
 ﻿using System;
+using Util.Logs.Abstractions;
 
 namespace Util.Logs {
     /// <summary>
@@ -6,82 +7,72 @@ namespace Util.Logs {
     /// </summary>
     public interface ILog {
         /// <summary>
-        /// 跟踪
+        /// 设置内容
         /// </summary>
-        /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Trace( string message, params object[] args );
+        /// <typeparam name="TContent">日志内容类型</typeparam>
+        /// <param name="action">设置内容操作</param>
+        ILog Set<TContent>( Action<TContent> action ) where TContent : ILogContent;
+        /// <summary>
+        /// 调试级别是否启用
+        /// </summary>
+        bool IsDebugEnabled { get; }
+        /// <summary>
+        /// 跟踪级别是否启用
+        /// </summary>
+        bool IsTraceEnabled { get; }
         /// <summary>
         /// 跟踪
         /// </summary>
-        /// <param name="exception">异常</param>
+        void Trace();
+        /// <summary>
+        /// 跟踪
+        /// </summary>
         /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Trace( Exception exception, string message = "", params object[] args );
+        void Trace( string message );
+        /// <summary>
+        /// 调试
+        /// </summary>
+        void Debug();
         /// <summary>
         /// 调试
         /// </summary>
         /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Debug( string message, params object[] args );
+        void Debug( string message );
         /// <summary>
-        /// 调试
+        /// 信息
         /// </summary>
-        /// <param name="exception">异常</param>
-        /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Debug( Exception exception, string message = "", params object[] args );
+        void Info();
         /// <summary>
         /// 信息
         /// </summary>
         /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Info( string message, params object[] args );
+        void Info( string message );
         /// <summary>
-        /// 信息
+        /// 警告
         /// </summary>
-        /// <param name="exception">异常</param>
-        /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Info( Exception exception, string message = "", params object[] args );
+        void Warn();
         /// <summary>
         /// 警告
         /// </summary>
         /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Warn( string message, params object[] args );
+        void Warn( string message );
         /// <summary>
-        /// 警告
+        /// 错误
         /// </summary>
-        /// <param name="exception">异常</param>
-        /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Warn( Exception exception, string message = "", params object[] args );
+        void Error();
         /// <summary>
         /// 错误
         /// </summary>
         /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Error( string message, params object[] args );
+        void Error( string message );
         /// <summary>
-        /// 错误
+        /// 致命错误
         /// </summary>
-        /// <param name="exception">异常</param>
-        /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Error( Exception exception, string message = "", params object[] args );
+        void Fatal();
         /// <summary>
         /// 致命错误
         /// </summary>
         /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Fatal( string message, params object[] args );
-        /// <summary>
-        /// 致命错误
-        /// </summary>
-        /// <param name="exception">异常</param>
-        /// <param name="message">日志消息</param>
-        /// <param name="args">参数值</param>
-        void Fatal( Exception exception, string message = "", params object[] args );
+        void Fatal( string message );
     }
 }

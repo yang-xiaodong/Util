@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Util.Helpers {
     /// <summary>
@@ -20,8 +21,7 @@ namespace Util.Helpers {
         /// </summary>
         /// <param name="input">输入值</param>
         public static int? ToIntOrNull( object input ) {
-            int result;
-            var success = int.TryParse( input.SafeString(), out result );
+            var success = int.TryParse( input.SafeString(), out var result );
             if( success )
                 return result;
             try {
@@ -48,8 +48,7 @@ namespace Util.Helpers {
         /// </summary>
         /// <param name="input">输入值</param>
         public static long? ToLongOrNull( object input ) {
-            long result;
-            var success = long.TryParse( input.SafeString(), out result );
+            var success = long.TryParse( input.SafeString(), out var result );
             if( success )
                 return result;
             try {
@@ -78,8 +77,7 @@ namespace Util.Helpers {
         /// <param name="input">输入值</param>
         /// <param name="digits">小数位数</param>
         public static float? ToFloatOrNull( object input, int? digits = null ) {
-            float result;
-            var success = float.TryParse( input.SafeString(), out result );
+            var success = float.TryParse( input.SafeString(), out var result );
             if( !success )
                 return null;
             if( digits == null )
@@ -88,7 +86,7 @@ namespace Util.Helpers {
         }
 
         /// <summary>
-        /// 转换为64位浮点型,并按指定小数位舍入，温馨提示：4舍6入5成双
+        /// 转换为64位浮点型,并按指定小数位舍入
         /// </summary>
         /// <param name="input">输入值</param>
         /// <param name="digits">小数位数</param>
@@ -97,13 +95,12 @@ namespace Util.Helpers {
         }
 
         /// <summary>
-        /// 转换为64位可空浮点型,并按指定小数位舍入，温馨提示：4舍6入5成双
+        /// 转换为64位可空浮点型,并按指定小数位舍入
         /// </summary>
         /// <param name="input">输入值</param>
         /// <param name="digits">小数位数</param>
         public static double? ToDoubleOrNull( object input, int? digits = null ) {
-            double result;
-            var success = double.TryParse( input.SafeString(), out result );
+            var success = double.TryParse( input.SafeString(), out var result );
             if( !success )
                 return null;
             if( digits == null )
@@ -112,7 +109,7 @@ namespace Util.Helpers {
         }
 
         /// <summary>
-        /// 转换为128位浮点型,并按指定小数位舍入，温馨提示：4舍6入5成双
+        /// 转换为128位浮点型,并按指定小数位舍入
         /// </summary>
         /// <param name="input">输入值</param>
         /// <param name="digits">小数位数</param>
@@ -121,13 +118,12 @@ namespace Util.Helpers {
         }
 
         /// <summary>
-        /// 转换为128位可空浮点型,并按指定小数位舍入，温馨提示：4舍6入5成双
+        /// 转换为128位可空浮点型,并按指定小数位舍入
         /// </summary>
         /// <param name="input">输入值</param>
         /// <param name="digits">小数位数</param>
         public static decimal? ToDecimalOrNull( object input, int? digits = null ) {
-            decimal result;
-            var success = decimal.TryParse( input.SafeString(), out result );
+            var success = decimal.TryParse( input.SafeString(), out var result );
             if( !success )
                 return null;
             if( digits == null )
@@ -151,8 +147,7 @@ namespace Util.Helpers {
             bool? value = GetBool( input );
             if( value != null )
                 return value.Value;
-            bool result;
-            return bool.TryParse( input.SafeString(), out result ) ? (bool?)result : null;
+            return bool.TryParse( input.SafeString(), out var result ) ? (bool?)result : null;
         }
 
         /// <summary>
@@ -188,7 +183,7 @@ namespace Util.Helpers {
         /// </summary>
         /// <param name="input">输入值</param>
         public static DateTime ToDate( object input ) {
-            return ToDateOrNull(input) ?? DateTime.MinValue;
+            return ToDateOrNull( input ) ?? DateTime.MinValue;
         }
 
         /// <summary>
@@ -196,8 +191,7 @@ namespace Util.Helpers {
         /// </summary>
         /// <param name="input">输入值</param>
         public static DateTime? ToDateOrNull( object input ) {
-            DateTime result;
-            return DateTime.TryParse( input.SafeString(), out result ) ? (DateTime?)result : null;
+            return DateTime.TryParse( input.SafeString(), out var result ) ? (DateTime?)result : null;
         }
 
         /// <summary>
@@ -213,8 +207,7 @@ namespace Util.Helpers {
         /// </summary>
         /// <param name="input">输入值</param>
         public static Guid? ToGuidOrNull( object input ) {
-            Guid result;
-            return Guid.TryParse( input.SafeString(), out result ) ? (Guid?)result : null;
+            return Guid.TryParse( input.SafeString(), out var result ) ? (Guid?)result : null;
         }
 
         /// <summary>
@@ -250,9 +243,14 @@ namespace Util.Helpers {
             if( input is string && string.IsNullOrWhiteSpace( input.ToString() ) )
                 return default( T );
             Type type = Common.GetType<T>();
+            var typeName = type.Name.ToLower();
             try {
-                if( type.Name.ToLower() == "guid" )
+                if( typeName == "string" )
+                    return (T)(object)input.ToString();
+                if( typeName == "guid" )
                     return (T)(object)new Guid( input.ToString() );
+                if( type.IsEnum )
+                    return Enum.Parse<T>( input );
                 if( input is IConvertible )
                     return (T)System.Convert.ChangeType( input, type );
                 return (T)input;
@@ -260,6 +258,23 @@ namespace Util.Helpers {
             catch {
                 return default( T );
             }
+        }
+
+        /// <summary>
+        /// 转换为字节数组
+        /// </summary>
+        /// <param name="input">输入值</param>        
+        public static byte[] ToBytes( string input ) {
+            return ToBytes( input, Encoding.UTF8 );
+        }
+
+        /// <summary>
+        /// 转换为字节数组
+        /// </summary>
+        /// <param name="input">输入值</param>
+        /// <param name="encoding">字符编码</param>
+        public static byte[] ToBytes( string input, Encoding encoding ) {
+            return string.IsNullOrWhiteSpace( input ) ? new byte[] { } : encoding.GetBytes( input );
         }
     }
 }

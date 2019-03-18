@@ -13,10 +13,13 @@ namespace Util.Helpers {
         /// </summary>
         /// <typeparam name="TEnum">枚举类型</typeparam>
         /// <param name="member">成员名或值,范例:Enum1枚举有成员A=0,则传入"A"或"0"获取 Enum1.A</param>
-        public static TEnum Parse<TEnum>( object member ){
+        public static TEnum Parse<TEnum>( object member ) {
             string value = member.SafeString();
-            if( string.IsNullOrWhiteSpace( value ) )
-                throw new ArgumentNullException( "member" );
+            if( string.IsNullOrWhiteSpace( value ) ) {
+                if( typeof( TEnum ).IsGenericType )
+                    return default( TEnum );
+                throw new ArgumentNullException( nameof( member ) );
+            }
             return (TEnum)System.Enum.Parse( Common.GetType<TEnum>(), value, true );
         }
 
@@ -63,7 +66,7 @@ namespace Util.Helpers {
         public static int GetValue( Type type, object member ) {
             string value = member.SafeString();
             if( string.IsNullOrWhiteSpace( value ) )
-                throw new ArgumentNullException( "member" );
+                throw new ArgumentNullException( nameof(member) );
             return (int)System.Enum.Parse( type, member.ToString(), true );
         }
 
@@ -86,35 +89,36 @@ namespace Util.Helpers {
         }
 
         /// <summary>
-        /// 获取描述项集合,文本设置为Description，值为Value
+        /// 获取项集合,文本设置为Description，值为Value
         /// </summary>
         /// <typeparam name="TEnum">枚举类型</typeparam>
         public static List<Item> GetItems<TEnum>() {
-            TypeInfo enumType = Common.GetType<TEnum>().GetTypeInfo();
-            ValidateEnum( enumType );
-            var result = new List<Item>();
-            foreach( var field in enumType.GetFields() )
-                AddItem<TEnum>( result, field );
-            return result.OrderBy( t => t.SortId ).ToList();
+            return GetItems( typeof( TEnum ) );
         }
 
         /// <summary>
-        /// 验证是否枚举类型
+        /// 获取项集合,文本设置为Description，值为Value
         /// </summary>
-        private static void ValidateEnum( TypeInfo enumType ) {
-            if( enumType.IsEnum == false )
-                throw new InvalidOperationException( string.Format( "类型 {0} 不是枚举", enumType ) );
+        /// <param name="type">枚举类型</param>
+        public static List<Item> GetItems( Type type ) {
+            type = Common.GetType( type );
+            if( type.IsEnum == false )
+                throw new InvalidOperationException( $"类型 {type} 不是枚举" );
+            var result = new List<Item>();
+            foreach( var field in type.GetFields() )
+                AddItem( type, result, field );
+            return result.OrderBy( t => t.SortId ).ToList();
         }
 
         /// <summary>
         /// 添加描述项
         /// </summary>
-        private static void AddItem<TEnum>( ICollection<Item> result, FieldInfo field ) {
-            if( !field.FieldType.GetTypeInfo().IsEnum )
+        private static void AddItem( Type type, ICollection<Item> result, FieldInfo field ) {
+            if( !field.FieldType.IsEnum )
                 return;
-            var value = GetValue<TEnum>( field.Name );
+            var value = GetValue( type, field.Name );
             var description = Reflection.GetDescription( field );
-            result.Add( new Item( description, value.ToString(), value ) );
+            result.Add( new Item( description, value, value ) );
         }
     }
 }

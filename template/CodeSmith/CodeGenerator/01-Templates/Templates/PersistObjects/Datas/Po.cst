@@ -1,4 +1,5 @@
 ﻿<%@ Template Language="C#" TargetLanguage="C#" Debug="True" Encoding="UTF-8" %>
+<%@ Register Name="TreePo" Template="TreePo.cst" MergeProperties="False" ExcludeProperties="" %>
 
 <%@ Assembly Src="..\..\..\Common\Model.cs" %>
 <%@ Assembly Src="..\..\..\Common\Extensions.cs" %>
@@ -15,12 +16,22 @@
 <% string SafeClassName = Entity.ClassName.ToSafeName(); %>
 <%-- 描述 --%>
 <% string Description = Entity.Description; %>
+<%-- 如果是树型实体，则调用子模板 --%>
+<%
+if( Entity.IsTreeEntity() ){
+    CodeTemplate template = new TreePo();
+    template.SetProperty("Namespace",Namespace);
+    template.SetProperty("Entity",Entity);
+    template.Render(this.Response);
+    return;
+}
+%>
 using System;
-using System.ComponentModel.DataAnnotations;
 using Util.Domains;
+using Util.Domains.Auditing;
 using Util.Datas.Persistence;
 
-namespace <%= Entity.GetNamespace(Namespace,"Domains","Models") %> {
+namespace <%= Namespace %>.Data.Pos.<%= Entity.TableSchema %>{
     /// <summary>
     /// <%= Description %>持久化对象
     /// </summary>

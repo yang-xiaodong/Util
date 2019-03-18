@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Logging;
 using Util.Properties;
 
 namespace Util.Exceptions {
@@ -7,6 +6,11 @@ namespace Util.Exceptions {
     /// 并发异常
     /// </summary>
     public class ConcurrencyException : Warning {
+        /// <summary>
+        /// 消息
+        /// </summary>
+        private readonly string _message;
+
         /// <summary>
         /// 初始化并发异常
         /// </summary>
@@ -27,7 +31,7 @@ namespace Util.Exceptions {
         /// </summary>
         /// <param name="exception">异常</param>
         public ConcurrencyException( Exception exception )
-            : this( "" , exception ) {
+            : this( "", exception ) {
         }
 
         /// <summary>
@@ -46,18 +50,13 @@ namespace Util.Exceptions {
         /// <param name="exception">异常</param>
         /// <param name="code">错误码</param>
         public ConcurrencyException( string message, Exception exception, string code )
-            : this( message, exception, code, LogLevel.Error ) {
+            : base( message, code, exception ) {
+            _message = message;
         }
 
         /// <summary>
-        /// 初始化并发异常
+        /// 错误消息
         /// </summary>
-        /// <param name="message">错误消息</param>
-        /// <param name="exception">异常</param>
-        /// <param name="code">错误码</param>
-        /// <param name="level">日志级别</param>
-        public ConcurrencyException( string message, Exception exception, string code, LogLevel level )
-            : base( "并发更新异常:" + LibraryResource.ConcurrencyExceptionMessage + Environment.NewLine + message, code, level, exception ) {
-        }
+        public override string Message => $"{LibraryResource.ConcurrencyExceptionMessage}.{_message}";
     }
 }

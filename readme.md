@@ -1,9 +1,11 @@
 # Util应用框架介绍
 
-[![Travis branch](https://img.shields.io/travis/dotnetcore/Util/master.svg?label=travis-ci)](https://travis-ci.org/dotnetcore/Util)
-[![AppVeyor](https://ci.appveyor.com/api/projects/status/4dwmbi65i3ulr37b/branch/master?svg=true)](https://ci.appveyor.com/project/UtilCore/util/branch/master)
-[![Member project of .NET China Foundation](https://github.com/dotnetcore/Home/blob/master/icons/member-project-of-netchina.png)](https://github.com/dotnetcore)
+[![Member project of .NET Core Community](https://img.shields.io/badge/member%20project%20of-NCC-9e20c9.svg)](https://github.com/dotnetcore)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://mit-license.org/)
+
+<a href="https://www.jetbrains.com/?from=Util" target="_blank">
+    <img src="./img/jetbrains.svg" title="JetBrains" />
+</a>
 
 Util是一个.net core平台下的应用框架，旨在提升小型团队的开发输出能力，由常用公共操作类(工具类)、分层架构基类、Ui组件，第三方组件封装，第三方业务接口封装，配套代码生成模板，权限等组成。
 
@@ -21,7 +23,7 @@ Util是一个.net core平台下的应用框架，旨在提升小型团队的开�
 
 几位好友（[AlexLEWIS](https://github.com/alexinea "刘怡") [Kiler](https://github.com/kiler398 "谢炀") [Lemon](https://github.com/liuhaoyang "刘浩杨") ）发起了.net core学习小组，并打算为国内.net core开源大业作出贡献，我果断加入了队伍进行学习，并决定对Util应用框架进行开源。
 
-经讨论，大家决定将各自的开源项目统一发布到 [.NET China Foundation](https://github.com/dotnetcore) 之下，以方便国内.net core开源项目的推广，同时也欢迎国内.net core开源项目作者的加入。
+经讨论，大家决定将各自的开源项目统一发布到 [.NET Core Community](https://github.com/dotnetcore) 之下，以方便国内.net core开源项目的推广，同时也欢迎国内.net core开源项目作者的加入。
 
 ## 技术框架与应用框架
 
@@ -31,7 +33,7 @@ Util是一个.net core平台下的应用框架，旨在提升小型团队的开�
 
 为了完成某项特定的技术需求，比如写日志，你可以使用原始API进行简单实现，并在多个地方复制粘贴进行调用。这很快会让你厌烦，除了冗余代码以外，你发现还需要经常扩展日志操作的功能，于是你想把日志操作封装成库来调用。
 
-等等，不要再重复造轮子了(为了学习目的造轮子，这绝对是值得肯定的，但确实准备拿来使用的，如果不是真有几把刷子，比如 [Lemon](https://github.com/liuhaoyang "刘浩杨") 同学，建议还是省省吧)，一些前辈已经做了这些基础工作，并且他们的工作已经在全球大范围的使用，非常成熟，并且持续维护。
+等等，不要再重复造轮子了(为了学习目的造轮子，这绝对是值得肯定的，但确实准备拿来使用的，如果不是真有几把刷子，建议还是省省吧)，一些前辈已经做了这些基础工作，并且他们的工作已经在全球大范围的使用，非常成熟，并且持续维护。
 
 这些能够解决特定技术问题的类库暂时统称为第三方技术框架,在项目上使用第三方技术框架是项目成功的必要保障。从此，你不再为如何实现某项技术问题而烦恼，也不需要为持续扩展的技术需求而疲于奔命，更多的精力被用在业务上，这才是你应该干的事。
 
@@ -109,8 +111,6 @@ Util应用框架面向的是*架构初学者*，但不是.net初学者。
 
 对于简单的操作，你可以运行和阅读相应单元测试代码，即可了解它们如何使用。对于复杂操作，一方面看单元测试，另外我们会编写相关文档以描述调用方式和工作机制。
 
-Util暂时未发布到Nuget，待成熟后发布。
-
 ## 开发环境及类库依赖
 
 以下是我们在项目开发和部署时使用的工具和组件，这个列表会经常更新。
@@ -118,8 +118,8 @@ Util暂时未发布到Nuget，待成熟后发布。
 > 如果没有标注版本号，则采用最新版本。
 
 1. 开发工具： 
-  - Visual Studio 2017 15.3
-  - Resharper 2017.2 EAP 11
+  - Visual Studio 2017
+  - [Resharper](https://www.jetbrains.com/resharper/)
 
 2. 数据库
   - Sql Server
@@ -127,7 +127,7 @@ Util暂时未发布到Nuget，待成熟后发布。
   - PostgreSQL
 
 3. 设计工具
-  - PowerDesigner
+  - PowerDesigner 16.5
   - XMind
 
 4. 版本控制
@@ -137,24 +137,23 @@ Util暂时未发布到Nuget，待成熟后发布。
   - Ubuntu Server
   - Docker
 
-6. 开发平台
-  - .Net Core 2.0
+6. SDK及Runtime
+  - 当前SDK 64位版本：[Sdk v2.2.104](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-2.2.104-windows-x64-installer)，开发机器安装
+  - 当前Runtime 64位版本：[Runtime v2.2.2](https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-2.2.2-windows-hosting-bundle-installer)，服务器安装
 
 7. 单元测试及模拟框架
   - XUnit
   - NSubstitute
 
-8. ORM
-  - Microsoft.EntityFrameworkCore 2.0
-  - Microsoft.EntityFrameworkCore.SqlServer 2.0.0
-  - Npgsql.EntityFrameworkCore.PostgreSQL 2.0.0
-  - Pomelo.EntityFrameworkCore.MySql 2.0.0-rtm-10057
+8. 数据访问框架
+  - [EntityFrameworkCore](https://docs.microsoft.com/zh-cn/ef/core/)
+  - [Dapper](https://github.com/StackExchange/Dapper)
 
 9. Ioc框架
   - Autofac
 
 10. Aop框架
-  - AspectCore
+  - [AspectCore](https://github.com/dotnetcore/AspectCore-Framework)
 
 11. Json框架
   - Newtonsoft.Json( 即Json.Net )
@@ -162,11 +161,81 @@ Util暂时未发布到Nuget，待成熟后发布。
 12. 映射框架
   - AutoMapper
 
-13. Id生成器
-  - ECommon.Utilities.ObjectId
+13. 日志框架
+  - [NLog](http://nlog-project.org/)
+  - [Exceptionless](https://github.com/exceptionless)
 
-14. Queryable动态扩展
-  - System.Linq.Dynamic.Core
+14. 缓存
+  - [EasyCaching](https://github.com/dotnetcore/EasyCaching)
+
+15. 事件总线
+  - [CAP](https://github.com/dotnetcore/CAP)
+
+16. Id生成器
+  - [ECommon.Utilities.ObjectId](https://github.com/tangxuehua/ecommon/blob/master/src/ECommon/Utilities/ObjectId.cs)
+
+17. RSA加密算法
+  - [DotnetCore.RSA](https://github.com/stulzq/DotnetCore.RSA/blob/master/DotnetCore.RSA/RSAHelper.cs)
+
+18. 二维码操作
+  - [QRCoder](https://github.com/codebude/QRCoder/)
+
+19. 短信操作
+  - [Luosimao](https://luosimao.com/)
+
+20. Queryable动态扩展
+  - [System.Linq.Dynamic.Core](https://github.com/StefH/System.Linq.Dynamic.Core)
+
+21. Web框架
+  - [Asp.Net Core](https://docs.microsoft.com/zh-cn/aspnet/core/)
+
+22. 定时任务调度框架
+  - [Quartz.Net](https://www.quartz-scheduler.net/)
+
+23. UI
+  - 脚本语言
+    - [TypeScript](https://www.tslang.cn)
+  - 脚本框架
+    - [Angular 7](https://angular.cn/)
+  - Css预处理器
+    - [Less](http://lesscss.org)
+    - [Sass](http://www.sass-lang.com)
+  - 组件库
+    - [Angular Material](https://material.angular.io/)
+    - [Angular Flex-Layout](https://github.com/angular/flex-layout)
+    - [PrimeNg](https://www.primefaces.org/primeng)
+    - [Ng-Zorro](https://ng.ant.design)
+    - [Ng-Alain](https://ng-alain.github.io/ng-alain/)
+  - 编辑器
+    - [CKEditor](https://ckeditor.com/ckeditor-4/)
+    - [Ng2-CKEditor](https://github.com/chymz/ng2-ckeditor)    
+  - 脚本库
+    - [Lodash](https://lodash.com/)
+    - [Moment](http://momentjs.cn/)
+  - 图标
+    - [Material Design Icon](https://material.io/icons/)
+    - [Font Awesome Icon](http://fontawesome.io/)
+    - [Ant Design Icon](https://ant.design/components/icon/)    
+  - 图表
+    - [Viser](https://viserjs.github.io/)
+    - [Antv-G2](https://antv.alipay.com/zh-cn/g2/3.x/index.html)
+  - 打包
+    - Webpack
+  - 测试
+    - Karma
+    - Jasmine
+
+24. 权限
+    - [Asp Net Core Identity](https://docs.microsoft.com/zh-cn/aspnet/core/security/authentication/identity?tabs=visual-studio%2Caspnetcore2x)
+    - [Identity Server](https://identityserver4.readthedocs.io/en/release/)
+
+25. 代码生成器
+  - CodeSmith 6.5
+
+26. 参考应用框架
+  - [ABP](http://aspnetboilerplate.com/)
+  - [Nop](https://www.nopcommerce.com) 
+    - Nop是一个开源商城，封装了大量实用的基础代码。
 
 ## 框架开发流程
 
@@ -212,7 +281,7 @@ Util暂时未发布到Nuget，待成熟后发布。
 
 ## 核心开发团队
 
-[何镇汐](https://github.com/utilcore) [程序喵](https://github.com/program-meow "胡雲鹏") [Richfiter](https://github.com/xingwen1987 "邢文")
+[何镇汐](https://github.com/utilcore) [程序喵](https://github.com/program-meow "胡雲鹏") [玄冰](https://github.com/jianxuanbing "简楚恩") [Richfiter](https://github.com/xingwen1987 "邢文")
 
 应用框架的开发工作量很大，个人显得力不从心，我也迫切希望找到一些志同道合的同学共同完成，同时也欢迎你的加入。
 
@@ -302,6 +371,8 @@ https://github.com/dotnetcore/util/
 > 包括.net core版本的跳跃式升级等，比如从.net core1.x升级到2.0。
 
 - 2017年7月21日，将.net core升级到2.0 Preview 2。
+- 2018年6月12日，将angular和material升级到6.x。
+- 2018年12月30日，将.net core升级到2.2。
 
 ## 更新计划
 
@@ -316,29 +387,92 @@ https://github.com/dotnetcore/util/
   - Ioc操作 - 基于Autofac [已发布]
   - 应用程序异常操作 [已发布]
   - 验证操作 [已发布]
+  - 验证操作拦截器 [已发布]
   - 枚举操作 [已发布]
   - 字符串操作 [已发布]
   - Lambda表达式操作 [已发布]
-  - 日志操作 [开发中]
+  - 日志操作 - 基于NLog和Exceptionless [已发布]
+  - 日志操作拦截器 [已发布]
   - IQueryable查询扩展 [已发布]
+  - 时间操作 [已发布]
+  - 上下文操作 [已发布]
+  - 类型查找器 [已发布]
+  - 二维码操作 - 基于QRCoder [已发布]
+  - 短信操作 -基于LuoSiMao [已发布]
+  - 加密操作 [已发布]
+  - Url参数生成器 [已发布]
+  - 调度器 - 基于Quartz.Net [已发布]
+  - 缓存 - 基于EasyCaching [已发布]
+  - 消息事件总线 - 基于Cap [已发布]
+  - 防重复提交过滤器
 - 分层架构基类及组件
   - 实体基类 [已发布]
   - 聚合根基类 [已发布]
   - 值对象基类 [已发布]
   - 树型实体基类 [已发布]
   - 操作审计 [已发布]
-  - EF实体映射配置基类 [已发布]
-  - EF工作单元基类 [已发布]
+  - EF Core实体映射配置基类 [已发布]
+  - EF Core工作单元基类 [已发布]
+  - EF Core调试日志 [已发布]
   - 仓储基类 [已发布]
   - 查询对象 [已发布]
   - 范围查询条件 [已发布]
   - 分页参数 [已发布]
   - 分页集合 [已发布]
   - 查询参数 [已发布]
-  - Crud服务 [开发中]
-  - 树型Crud服务 [开发中]
+  - 工作单元服务 [已发布]
+  - 工作单元拦截器 [已发布]
+  - Crud服务 [已发布]
+  - 树型服务 [已发布]
   - 持久化对象Po基类 [已发布]
   - 持久化对象存储基类 [已发布]
+  - 事件总线 [已发布]
+  - Crud控制器基类 [已发布]
+  - 树型控制器基类 [已发布]
+  - Sql生成器 [已发布]
+  - Sql查询对象 [已发布]
+- Material UI组件 - 支持HtmlHelper和TagHelper两种方式
+  - 组件基类  [已发布]
+  - TagHelper基类  [已发布]
+  - 图标 - 集成了Material Design和Font Awesome图标集 [已发布]
+  - 下拉列表 - 基于Material Select组件 [已发布]
+  - 文本框 - 基于Material 文本框和日期选择框组件 [已发布]
+  - 表单 [已发布]
+  - 按钮 - 基于Material 按钮组件 [已发布]
+  - 链接 - 基于Material 链接组件 [已发布]
+  - 复选框 - 基于Material 复选框组件 [已发布]
+  - 滑动开关 - 基于Material slide-toggle组件 [已发布]
+  - 单选框 - 基于Material 单选框组件 [已发布]
+  - 菜单 - 基于Material Menu组件 [已发布]
+  - 选项卡 - 基于Material Tabs组件 [已发布]
+  - 导航侧边栏 - 基于Material SideNav组件 [已发布]
+  - 工具栏 - 基于Material Toolbar组件 [已发布]
+  - 卡片 - 基于Material Card组件 [已发布]
+  - 面板 - 基于Material Panel组件 [已发布]
+  - 网格 - 基于Material Grid List组件 [已发布]
+  - 列表 - 基于Material List组件 [已发布]
+  - 弹出层 - 基于Material Dialog组件 [已发布]
+  - 表格 - 基于Material Table组件 [已发布]
+  - 布局(栅格) - 基于Angular flex-layout组件 [已发布]
+  - 树型表格 - 基于PrimeNg TreeTable组件改造 [已发布]
+  - 颜色选择器 - 基于PrimeNg ColorPicker组件 [已发布]
+  - 富文本框编辑器 - 基于CKEditor组件 [已发布]
+  
+- 权限 [开发中]
+  - Identity集成 [待启动]
+- 公共业务基类
+  - 地址 [已发布]
+- 支付操作
+  - 支付宝条码支付 [已发布]
+  - 支付宝二维码支付 [已发布]
+  - 支付宝电脑网站支付 [已发布]
+  - 支付宝手机网站支付 [已发布]
+  - 支付宝回调 [已发布]
+  - 支付宝APP支付 [已发布]
+  - 微信支付回调 [已发布]
+  - 微信APP支付 [已发布]
+  - 微信小程序支付 [已发布]
+  - 微信JsApi支付 [已发布]
 
 ## 更新列表
 
@@ -362,3 +496,49 @@ https://github.com/dotnetcore/util/
 - 2017年8月14日，更新了持久化对象Po基类，仓储部分实现及相关单元测试。
 - 2017年8月19日，更新了操作审计(Util/Domains/Auditing)。
 - 2017年8月21日，更新了仓储基类，持久化对象存储基类，IQueryable查询扩展。
+- 2017年9月3日，更新了公共业务类型-地址(Address)，修改了代码生成模板。
+- 2017年9月10日，更新了时间操作类，修改了代码生成模板。
+- 2017年9月15日，更新了上下文操作(Util/Contexts)，更新了日期格式化扩展(Util/Extensions.DateTime)。
+- 2017年9月19日，更新了日志操作，日志提供程序支持NLog与Exceptionless。
+- 2017年9月20日，更新了日志操作拦截器(Util.Logs/Aspects)。
+- 2017年9月21日，更新了验证操作拦截器(Util/Validations/Aspects)。
+- 2017年9月27日，更新了工作单元服务(Util/Datas.UnitOfWorks),工作单元拦截器(Util.Applications/Aspects),Crud服务(Util.Applications)。
+- 2017年9月30日，更新了事件总线(Util/Events)，类型查找器(Util/Reflections)，支持了IOC扫描注册功能。
+- 2017年10月21日，更新了Ui组件基类及TagHelper基类，图标组件(Util.Ui.Angular/Material/Icons)及单元测试。
+- 2017年10月25日，更新了二维码操作(Util.Tools.QrCode,基于QRCoder)和短信操作(Util.Tools.Sms，封装了LuoSiMao接口)。
+- 2017年10月29日，更新了加密操作(Util.Helpers.Encrypt，集成了MD5,DES,AES,RSA加密操作)及单元测试。
+- 2017年10月30日，更新了Url参数生成器(Util.Parameters)及单元测试。
+- 2017年10月31日，更新了支付宝条码支付操作(Util.Biz.Payments/Alipay)及单元测试。
+- 2017年11月15日，更新了EF Core调试日志(Util.Datas/Logs)及单元测试。
+- 2018年1月2日，更新了下拉列表组件(Util.Ui.Angular/Material/Forms)及单元测试。
+- 2018年1月10日，更新了文本框组件(Util.Ui.Angular/Material/Forms)及单元测试。
+- 2018年1月12日，更新了表单组件(Util.Ui.Angular/Material/Forms)及单元测试。
+- 2018年1月14日，更新了按钮和链接组件(Util.Ui.Angular/Material/Buttons)及单元测试。
+- 2018年1月16日，更新了复选框组件(Util.Ui.Angular/Material/Forms)及单元测试。
+- 2018年1月17日，更新了滑动开关组件(Util.Ui.Angular/Material/Forms)及单元测试。
+- 2018年1月18日，更新了单选框组件(Util.Ui.Angular/Material/Forms)及单元测试。
+- 2018年2月18日，更新了菜单组件(Util.Ui.Angular/Material/Menus)及单元测试。
+- 2018年2月22日，更新了选项卡组件(Util.Ui.Angular/Material/Tabs)及单元测试。
+- 2018年2月25日，更新了导航侧边栏组件(Util.Ui.Angular/Material/SideNavs)及工具栏组件(Util.Ui.Angular/Material/Toolbars)。
+- 2018年2月26日，更新了卡片组件(Util.Ui.Angular/Material/Cards)。
+- 2018年2月27日，更新了面板组件(Util.Ui.Angular/Material/Panels)。
+- 2018年3月1日，更新了网格组件(Util.Ui.Angular/Material/Grids)。
+- 2018年3月4日，更新了列表，导航列表，选择列表组件(Util.Ui.Angular/Material/Lists)。
+- 2018年3月7日，更新了弹出层组件(Util.Ui.Angular/Material/Dialogs)。
+- 2018年3月10日，更新了表格组件(Util.Ui.Angular/Material/Tables)。
+- 2018年3月13日，更新了布局组件(Util.Ui.Angular/FlexLayout)。
+- 2018年4月16日，更新了树型表格组件(Util.Ui.Angular/Prime/TreeTables)，树型控制器，树型服务。
+- 2018年4月20日，更新了颜色选择器组件(Util.Ui.Angular/Prime/ColorPickers)。
+- 2018年4月23日，更新了富文本框编辑器组件(Util.Ui.Angular/CkEditor)。
+- 2018年5月22日，更新了支付宝电脑网站支付和手机网站支付操作。
+- 2018年5月24日，更新了支付宝回调操作。
+- 2018年6月19日，更新了支付宝APP支付。
+- 2018年7月15日，更新了微信APP支付。
+- 2018年7月16日，更新了微信支付回调。
+- 2018年8月30日，更新了Sql生成器和SqlQuery查询对象。
+- 2018年9月14日，更新了WebApi跟踪日志过滤器。
+- 2018年10月19日，更新了支付宝二维码支付。
+- 2018年11月16日，更新了微信小程序支付。
+- 2018年11月18日，更新了基于Quartz.Net的调度器(Util.Schedulers/Quartz)及控制台示例。
+- 2019年1月15日，更新了基于EasyCaching的缓存操作(Util.Caches/EasyCaching)，更新了基于Cap的消息事件总线(Util.Events/Cap)，更新了防重复提交过滤器(Util.Webs/Filters/AntiDuplicateRequestAttribute)。
+- 2019年2月21日，更新微信JsApi支付。

@@ -18,9 +18,18 @@ namespace Util.Domains.Repositories {
         /// <summary>
         /// 初始化分页集合
         /// </summary>
+        /// <param name="data">内容</param>
+        public PagerList( IEnumerable<T> data = null )
+            : this( 0, data ) {
+        }
+
+        /// <summary>
+        /// 初始化分页集合
+        /// </summary>
         /// <param name="totalCount">总行数</param>
-        public PagerList( int totalCount )
-            : this( 1, 20, totalCount ) {
+        /// <param name="data">内容</param>
+        public PagerList( int totalCount, IEnumerable<T> data = null )
+            : this( 1, 20, totalCount, data ) {
         }
 
         /// <summary>
@@ -29,8 +38,9 @@ namespace Util.Domains.Repositories {
         /// <param name="page">页索引</param>
         /// <param name="pageSize">每页显示行数</param>
         /// <param name="totalCount">总行数</param>
-        public PagerList( int page, int pageSize, int totalCount )
-            : this( page, pageSize, totalCount, "" ) {
+        /// <param name="data">内容</param>
+        public PagerList( int page, int pageSize, int totalCount, IEnumerable<T> data = null )
+            : this( page, pageSize, totalCount, "", data ) {
         }
 
         /// <summary>
@@ -40,8 +50,9 @@ namespace Util.Domains.Repositories {
         /// <param name="pageSize">每页显示行数</param>
         /// <param name="totalCount">总行数</param>
         /// <param name="order">排序条件</param>
-        public PagerList( int page, int pageSize, int totalCount, string order ) {
-            Data = new List<T>();
+        /// <param name="data">内容</param>
+        public PagerList( int page, int pageSize, int totalCount, string order, IEnumerable<T> data = null ) {
+            Data = data?.ToList() ?? new List<T>();
             var pager = new Pager( page, pageSize, totalCount );
             TotalCount = pager.TotalCount;
             PageCount = pager.GetPageCount();
@@ -54,8 +65,9 @@ namespace Util.Domains.Repositories {
         /// 初始化分页集合
         /// </summary>
         /// <param name="pager">查询对象</param>
-        public PagerList( IPager pager )
-            : this( pager.Page, pager.PageSize, pager.TotalCount, pager.Order ) {
+        /// <param name="data">内容</param>
+        public PagerList( IPager pager, IEnumerable<T> data = null )
+            : this( pager.Page, pager.PageSize, pager.TotalCount, pager.Order, data ) {
         }
 
         /// <summary>
@@ -92,7 +104,7 @@ namespace Util.Domains.Repositories {
         /// 索引器
         /// </summary>
         /// <param name="index">索引</param>
-        public T this[ int index ] {
+        public T this[int index] {
             get => Data[index];
             set => Data[index] = value;
         }
@@ -121,14 +133,20 @@ namespace Util.Domains.Repositories {
         }
 
         /// <summary>
-        /// 转换分页集合的元素类型
+        /// 转换分页集合
         /// </summary>
         /// <typeparam name="TResult">目标元素类型</typeparam>
         /// <param name="converter">转换方法</param>
         public PagerList<TResult> Convert<TResult>( Func<T, TResult> converter ) {
-            var result = new PagerList<TResult>( Page, PageSize, TotalCount, Order );
-            result.AddRange( this.Data.Select( converter ) );
-            return result;
+            return Convert( this.Data.Select( converter ) );
+        }
+
+        /// <summary>
+        /// 转换分页集合
+        /// </summary>
+        /// <param name="data">内容</param>
+        public PagerList<TResult> Convert<TResult>( IEnumerable<TResult> data ) {
+            return new PagerList<TResult>( Page, PageSize, TotalCount, Order, data );
         }
     }
 }

@@ -8,27 +8,34 @@
     <Authors>何镇汐;dotnetcore</Authors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\output\test</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\output\test</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
-    <None Remove="SqlServer\Scripts\Pd\Samples.pdb" />
+    <None Remove="Commons\Datas\SqlServer\Scripts\Pd\Samples.pdb" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0-preview-20170810-02" />
-    <PackageReference Include="xunit" Version="2.3.0-beta4-build3742" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0-beta4-build3742" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Util.Datas\02-Util.Datas.csproj" />
+    <ProjectReference Include="..\..\src\Util.Datas\07-Util.Datas.csproj" />
     <ProjectReference Include="..\..\src\Util\01-Util.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SqlServer\Scripts\Pd\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="SqlServer\Scripts\database.sql">
+    <None Update="Commons\Datas\SqlServer\Scripts\database.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Util.Datas.Ef.Core;
-using System.Data.Common;
+using Util.Datas.UnitOfWorks;
 
 namespace Util.Datas.Ef.SqlServer {
     /// <summary>
@@ -12,33 +13,25 @@ namespace Util.Datas.Ef.SqlServer {
         /// <summary>
         /// 初始化SqlServer工作单元
         /// </summary>
-        /// <param name="connection">连接字符串</param>
-        protected UnitOfWork( string connection )
-            : base( new DbContextOptionsBuilder().UseSqlServer( connection ).Options ) {
-        }
-
-        /// <summary>
-        /// 初始化SqlServer工作单元
-        /// </summary>
-        /// <param name="connection">连接</param>
-        protected UnitOfWork( DbConnection connection )
-            : base( new DbContextOptionsBuilder().UseSqlServer( connection ).Options ) {
-        }
-
-        /// <summary>
-        /// 初始化SqlServer工作单元
-        /// </summary>
         /// <param name="options">配置</param>
-        protected UnitOfWork( DbContextOptions options )
-            : base( options ) {
+        /// <param name="manager">工作单元服务</param>
+        protected UnitOfWork( DbContextOptions options, IUnitOfWorkManager manager )
+            : base( options, manager ) {
         }
 
         /// <summary>
-        /// 获取映射类型列表
+        /// 获取映射接口类型
+        /// </summary>
+        protected override Type GetMapType() {
+            return typeof( IMap );
+        }
+
+        /// <summary>
+        /// 获取映射实例列表
         /// </summary>
         /// <param name="assembly">程序集</param>
-        protected override IEnumerable<Util.Datas.Ef.Core.IMap> GetMapTypes( Assembly assembly ) {
-            return Util.Helpers.Reflection.GetTypesByInterface<IMap>( assembly );
+        protected override IEnumerable<Util.Datas.Ef.Core.IMap> GetMapInstances( Assembly assembly ) {
+            return Util.Helpers.Reflection.GetInstancesByInterface<IMap>( assembly );
         }
     }
 }

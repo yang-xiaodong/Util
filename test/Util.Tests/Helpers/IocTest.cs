@@ -1,5 +1,6 @@
-﻿using Autofac;
-using Util.DependencyInjection;
+﻿using System.Collections.Generic;
+using Autofac;
+using Util.Dependency;
 using Util.Helpers;
 using Util.Tests.Samples;
 using Xunit;
@@ -13,7 +14,7 @@ namespace Util.Tests.Helpers {
         /// 加载配置
         /// </summary>
         protected override void Load( ContainerBuilder builder ) {
-            builder.RegisterType<Sample>().As<ISample>();
+            builder.AddScoped<ISample, Sample>();
         }
     }
 
@@ -42,8 +43,49 @@ namespace Util.Tests.Helpers {
         /// </summary>
         [Fact]
         public void TestCreate_2() {
-            var sample = Ioc.Create(typeof(ISample));
+            var sample = Ioc.Create<ISample>(typeof(ISample));
             Assert.NotNull( sample );
+        }
+
+        /// <summary>
+        /// 测试作用域
+        /// </summary>
+        [Fact]
+        public void TestScope() {
+            using ( var scope = Ioc.BeginScope() ) {
+                var sample = scope.Create<ISample>();
+                Assert.NotNull( sample );
+            }
+        }
+
+        /// <summary>
+        /// 测试集合
+        /// </summary>
+        [Fact]
+        public void TestCollection() {
+            var samples = Ioc.Create<IEnumerable<ISample>>();
+            Assert.NotNull( samples );
+            Assert.Single( samples );
+        }
+
+        /// <summary>
+        /// 创建集合
+        /// </summary>
+        [Fact]
+        public void TestCreateList() {
+            var samples = Ioc.CreateList<ISample>();
+            Assert.NotNull( samples );
+            Assert.Single( samples );
+        }
+
+        /// <summary>
+        /// 创建集合
+        /// </summary>
+        [Fact]
+        public void TestCreateList_2() {
+            var samples = Ioc.CreateList<ISample>( typeof( ISample ) );
+            Assert.NotNull( samples );
+            Assert.Single( samples );
         }
     }
 }

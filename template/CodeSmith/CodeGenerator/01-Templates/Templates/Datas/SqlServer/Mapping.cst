@@ -18,9 +18,9 @@
 <% string Description = Entity.Description; %>
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using <%= Entity.GetNamespace(Namespace,"Domains","Models") %>;
+using <%= Entity.GetNamespace(Namespace,"Domain","Models") %>;
 
-namespace <%= Entity.GetNamespace(Namespace,"Datas.Mappings") %> {
+namespace <%=Namespace%>.Data.Mappings.<%= Entity.TableSchema %>.SqlServer {
     /// <summary>
     /// <%= Description %>映射配置
     /// </summary>
@@ -36,28 +36,16 @@ namespace <%= Entity.GetNamespace(Namespace,"Datas.Mappings") %> {
         /// 映射属性
         /// </summary>
         protected override void MapProperties( EntityTypeBuilder<<%= SafeClassName %>> builder ) {
-            base.MapProperties( builder );
             <%
             foreach(var p in Entity.Properties)
-            {                
+            {
                 Response.Write(PropertyExpression(p));
             }
             %>
-        }
-        
-        /// <summary>
-        /// 映射导航属性
-        /// </summary>
-        protected override void MapAssociations( EntityTypeBuilder<<%= SafeClassName %>> builder ) {
-            <%
-            foreach(var r in Entity.Relationships.Where(e => e.IsMapped))
-            {
-                if (r.IsManyToMany)
-                    Response.Write(ManyToManyExpression(r));
-                else
-                    Response.Write(RelationshipExpression(r));
-            }
-            %>
+            <%if(Entity.IsTreeEntity()){%>
+            builder.Property( t => t.Path ).HasColumnName( "Path" );
+            builder.Property( t => t.Level ).HasColumnName( "Level" );
+            <%}%>
         }
     }
 }
@@ -69,7 +57,10 @@ public string PropertyExpression(Property property)
     bool isByteArray = property.SystemType == typeof(byte[]);
     bool isDecimal = property.SystemType == typeof(Decimal);
     
-    if( property.IsKey == false )
+    if( property.ColumnName.ToLower() == "isdeleted" )
+        return "            builder.HasQueryFilter( t => t.IsDeleted == false );\r\n";
+    
+    if( property.IsKey == false  )
         return string.Empty;
     
     if( property.ColumnName.ToLower() == "version" && isByteArray )
@@ -91,7 +82,7 @@ public string PropertyExpression(Property property)
     sb.Append(".HasColumnName(\"");
     sb.Append(property.ColumnName);
     sb.Append("\")");
-
+    
     if (property.IsIdentity == true)
     {
       sb.AppendLine();
@@ -112,52 +103,52 @@ public string PropertyExpression(Property property)
 public string ManyToManyExpression(Relationship relationship)
 {
     StringBuilder sb = new StringBuilder();
-    sb.AppendLine("            //" + Entity.GetOtherDescription(relationship.OtherEntity ));
-    
-    sb.Append(' ', 3 * 4);
-    sb.Append("builder.HasMany(t => t.");
-    sb.Append(relationship.ThisPropertyName);
-    sb.Append(")");
-
-    sb.AppendLine();
-    sb.Append(' ', 4 * 4);
-    sb.Append(".WithMany(t => t.");
-    sb.Append(relationship.OtherPropertyName);
-    sb.Append(")");
-
-    sb.AppendLine();
-    sb.Append(' ', 4 * 4);
-    sb.Append(".Map(m =>");
-    sb.AppendLine();
-    sb.Append(' ', 4 * 4);
-    sb.Append("{");
-
-    sb.AppendLine();
-    sb.Append(' ', 5 * 4);
-    sb.Append("m.ToTable(\"");
-    sb.Append(relationship.JoinTable);
-    sb.Append("\", \"");
-    sb.Append(relationship.JoinSchema);
-    sb.Append("\");");
-
-    sb.AppendLine();
-    sb.Append(' ', 5 * 4);
-    sb.Append("m.MapLeftKey(");
-    sb.Append(relationship.JoinThisColumn.ToDelimitedString(", ", "\"{0}\""));
-    sb.Append(");");
-
-    sb.AppendLine();
-    sb.Append(' ', 5 * 4);
-    sb.Append("m.MapRightKey(");
-    sb.Append(relationship.JoinOtherColumn.ToDelimitedString(", ", "\"{0}\""));
-    sb.Append(");");
-
-    sb.AppendLine();
-    sb.Append(' ', 4 * 4);
-    sb.Append("})");
-
-    sb.Append(";");
-    sb.AppendLine();
+//    sb.AppendLine("            //" + Entity.GetOtherDescription(relationship.OtherEntity ));
+//    
+//    sb.Append(' ', 3 * 4);
+//    sb.Append("builder.HasMany(t => t.");
+//    sb.Append(relationship.ThisPropertyName);
+//    sb.Append(")");
+//
+//    sb.AppendLine();
+//    sb.Append(' ', 4 * 4);
+//    sb.Append(".WithMany(t => t.");
+//    sb.Append(relationship.OtherPropertyName);
+//    sb.Append(")");
+//
+//    sb.AppendLine();
+//    sb.Append(' ', 4 * 4);
+//    sb.Append(".Map(m =>");
+//    sb.AppendLine();
+//    sb.Append(' ', 4 * 4);
+//    sb.Append("{");
+//
+//    sb.AppendLine();
+//    sb.Append(' ', 5 * 4);
+//    sb.Append("m.ToTable(\"");
+//    sb.Append(relationship.JoinTable);
+//    sb.Append("\", \"");
+//    sb.Append(relationship.JoinSchema);
+//    sb.Append("\");");
+//
+//    sb.AppendLine();
+//    sb.Append(' ', 5 * 4);
+//    sb.Append("m.MapLeftKey(");
+//    sb.Append(relationship.JoinThisColumn.ToDelimitedString(", ", "\"{0}\""));
+//    sb.Append(");");
+//
+//    sb.AppendLine();
+//    sb.Append(' ', 5 * 4);
+//    sb.Append("m.MapRightKey(");
+//    sb.Append(relationship.JoinOtherColumn.ToDelimitedString(", ", "\"{0}\""));
+//    sb.Append(");");
+//
+//    sb.AppendLine();
+//    sb.Append(' ', 4 * 4);
+//    sb.Append("})");
+//
+//    sb.Append(";");
+//    sb.AppendLine();
 
     return sb.ToString();
 }
@@ -177,7 +168,7 @@ public string RelationshipExpression(Relationship relationship)
     }
     else if (relationship.ThisCardinality == Cardinality.ZeroOrOne)
     {
-        sb.Append("builder.HasOptional(t => t.");
+        sb.Append("builder.HasOne(t => t.");
         sb.Append(relationship.ThisPropertyName);
         sb.Append(")");
     }

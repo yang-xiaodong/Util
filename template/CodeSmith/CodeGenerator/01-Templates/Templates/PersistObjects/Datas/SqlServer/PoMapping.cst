@@ -18,9 +18,9 @@
 <% string Description = Entity.Description; %>
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using <%= Entity.GetNamespace(Namespace,"Domains","Models") %>;
+using <%=Namespace%>.Data.Pos.<%=Entity.TableSchema%>;
 
-namespace <%= Entity.GetNamespace(Namespace,"Datas.Mappings") %> {
+namespace <%=Namespace%>.Data.Mappings.<%=Entity.TableSchema%>.SqlServer {
     /// <summary>
     /// <%= Description %>持久化对象映射配置
     /// </summary>
@@ -36,26 +36,10 @@ namespace <%= Entity.GetNamespace(Namespace,"Datas.Mappings") %> {
         /// 映射属性
         /// </summary>
         protected override void MapProperties( EntityTypeBuilder<<%= SafeClassName %>Po> builder ) {
-            base.MapProperties( builder );
             <%
             foreach(var p in Entity.Properties)
             {                
                 Response.Write(PropertyExpression(p));
-            }
-            %>
-        }
-        
-        /// <summary>
-        /// 映射导航属性
-        /// </summary>
-        protected override void MapAssociations( EntityTypeBuilder<<%= SafeClassName %>Po> builder ) {
-            <%
-            foreach(var r in Entity.Relationships.Where(e => e.IsMapped))
-            {
-                if (r.IsManyToMany)
-                    Response.Write(ManyToManyExpression(r));
-                else
-                    Response.Write(RelationshipExpression(r));
             }
             %>
         }
@@ -64,10 +48,13 @@ namespace <%= Entity.GetNamespace(Namespace,"Datas.Mappings") %> {
 <script runat="template">
 
 public string PropertyExpression(Property property)
-{
+{    
     bool isString = property.SystemType == typeof(string);
     bool isByteArray = property.SystemType == typeof(byte[]);
     bool isDecimal = property.SystemType == typeof(Decimal);
+    
+    if( property.ColumnName.ToLower() == "isdeleted" )
+        return "            builder.HasQueryFilter( t => t.IsDeleted == false );\r\n";
     
     if( property.IsKey == false )
         return string.Empty;
@@ -171,13 +158,13 @@ public string RelationshipExpression(Relationship relationship)
 
     if (relationship.ThisCardinality == Cardinality.One)
     {
-        sb.Append("HasRequired(t => t.");
+        sb.Append("builder.HasOne(t => t.");
         sb.Append(relationship.ThisPropertyName);
         sb.Append(")");
     }
     else if (relationship.ThisCardinality == Cardinality.ZeroOrOne)
     {
-        sb.Append("HasOptional(t => t.");
+        sb.Append("builder.HasOne(t => t.");
         sb.Append(relationship.ThisPropertyName);
         sb.Append(")");
     }

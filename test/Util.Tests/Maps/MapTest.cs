@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Util.Helpers;
 using Util.Maps;
 using Util.Tests.Samples;
 using Xunit;
@@ -58,7 +59,7 @@ namespace Util.Tests.Maps {
         [Fact]
         public void TestMapToList() {
             List<Sample> sampleList = new List<Sample> { new Sample { StringValue = "a" }, new Sample { StringValue = "b" } };
-            List<Sample2> sample2List = sampleList.MapToList<Sample2>( );
+            List<Sample2> sample2List = sampleList.MapToList<Sample2>();
             Assert.Equal( 2, sample2List.Count );
             Assert.Equal( "a", sample2List[0].StringValue );
         }
@@ -70,7 +71,7 @@ namespace Util.Tests.Maps {
         public void TestMapToList_Empty() {
             List<Sample> sampleList = new List<Sample>();
             List<Sample2> sample2List = sampleList.MapToList<Sample2>();
-            Assert.Equal( 0, sample2List.Count );
+            Assert.Empty( sample2List );
         }
 
         /// <summary>
@@ -78,10 +79,53 @@ namespace Util.Tests.Maps {
         /// </summary>
         [Fact]
         public void TestMapToList_Array() {
-            Sample[] sampleList = new Sample[] { new Sample { StringValue = "a" }, new Sample { StringValue = "b" } };
+            Sample[] sampleList = { new Sample { StringValue = "a" }, new Sample { StringValue = "b" } };
             List<Sample2> sample2List = sampleList.MapToList<Sample2>();
             Assert.Equal( 2, sample2List.Count );
             Assert.Equal( "a", sample2List[0].StringValue );
+        }
+
+        /// <summary>
+        /// 并发测试
+        /// </summary>
+        [Fact]
+        public void TestMapTo_MultipleThread() {
+            Thread.ParallelExecute( () => {
+                var sample = new Sample { StringValue = "a" };
+                var sample2 = sample.MapTo<Sample2>();
+                Assert.Equal( "a", sample2.StringValue );
+            },20 );
+        }
+
+        /// <summary>
+        /// 测试忽略特性
+        /// </summary>
+        [Fact]
+        public void TestMapTo_Ignore() {
+            DtoSample sample2 = new DtoSample { Name = "a",IgnoreValue = "b"};
+            EntitySample sample = sample2.MapTo<EntitySample>();
+            Assert.Equal( "a", sample.Name );
+            Assert.Null( sample.IgnoreValue );
+            DtoSample sample3 = sample.MapTo<DtoSample>();
+            Assert.Equal( "a", sample3.Name );
+            Assert.Null( sample3.IgnoreValue );
+        }
+
+        /// <summary>
+        /// 测试Castle代理类
+        /// </summary>
+        [Fact]
+        public void TestMapTo_CastleProxy() {
+            Castle.DynamicProxy.ProxyGenerator proxyGenerator = new Castle.DynamicProxy.ProxyGenerator();
+            var proxy = proxyGenerator.CreateClassProxy<DtoSample>();
+            proxy.Name = "a";
+            EntitySample sample = proxy.MapTo<EntitySample>();
+            Assert.Equal( "a", sample.Name );
+
+            var proxy2 = proxyGenerator.CreateClassProxy<DtoSample>();
+            proxy2.Name = "b";
+            sample = proxy2.MapTo<EntitySample>();
+            Assert.Equal( "b", sample.Name );
         }
     }
 }

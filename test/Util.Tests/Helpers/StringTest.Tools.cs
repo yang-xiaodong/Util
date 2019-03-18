@@ -25,8 +25,8 @@ namespace Util.Tests.Helpers {
                 new Guid( "83B0233C-A24F-49FD-8083-1337209EBC9A" ),
                 new Guid( "EAB523C6-2FE7-47BE-89D5-C6D440C3033A" )
             };
-            Assert.Equal( "83B0233C-A24F-49FD-8083-1337209EBC9A,EAB523C6-2FE7-47BE-89D5-C6D440C3033A".ToLower(),Util.Helpers.String.Join( list ) );
-            Assert.Equal( "'83B0233C-A24F-49FD-8083-1337209EBC9A','EAB523C6-2FE7-47BE-89D5-C6D440C3033A'".ToLower(),Util.Helpers.String.Join( list, "'" ) );
+            Assert.Equal( "83B0233C-A24F-49FD-8083-1337209EBC9A,EAB523C6-2FE7-47BE-89D5-C6D440C3033A".ToLower(), Util.Helpers.String.Join( list ) );
+            Assert.Equal( "'83B0233C-A24F-49FD-8083-1337209EBC9A','EAB523C6-2FE7-47BE-89D5-C6D440C3033A'".ToLower(), Util.Helpers.String.Join( list, "'" ) );
         }
 
         /// <summary>
@@ -41,6 +41,53 @@ namespace Util.Tests.Helpers {
         [InlineData( "爩", "y" )]
         public void TestPinYin( string input, string result ) {
             Assert.Equal( result, Util.Helpers.String.PinYin( input ) );
+        }
+
+        /// <summary>
+        /// 首字母小写
+        /// </summary>
+        [Theory]
+        [InlineData( null, "" )]
+        [InlineData( "", "" )]
+        [InlineData( " ", "" )]
+        [InlineData( "a", "a" )]
+        [InlineData( "A", "a" )]
+        [InlineData( "Ab", "ab" )]
+        [InlineData( "AB", "aB" )]
+        [InlineData( "Abc", "abc" )]
+        public void TestFirstLowerCase( string value, string result ) {
+            Assert.Equal( result, Util.Helpers.String.FirstLowerCase( value ) );
+        }
+
+        /// <summary>
+        /// 首字母大写
+        /// </summary>
+        [Theory]
+        [InlineData( null, "" )]
+        [InlineData( "", "" )]
+        [InlineData( " ", "" )]
+        [InlineData( "a", "A" )]
+        [InlineData( "A", "A" )]
+        [InlineData( "ab", "Ab" )]
+        [InlineData( "AB", "AB" )]
+        [InlineData( "abC", "AbC" )]
+        public void TestFirstUpperCase( string value, string result ) {
+            Assert.Equal( result, Util.Helpers.String.FirstUpperCase( value ) );
+        }
+
+        /// <summary>
+        /// 分隔词组
+        /// </summary>
+        [Theory]
+        [InlineData( null, "" )]
+        [InlineData( "", "" )]
+        [InlineData( " ", "" )]
+        [InlineData( "AaA", "aa-a" )]
+        [InlineData( "AA", "aa" )]
+        [InlineData( "ABC", "abc" )]
+        [InlineData( "NetCore", "net-core" )]
+        public void TestSplitWordGroup( string value, string result ) {
+            Assert.Equal( result, Util.Helpers.String.SplitWordGroup( value ) );
         }
     }
 }

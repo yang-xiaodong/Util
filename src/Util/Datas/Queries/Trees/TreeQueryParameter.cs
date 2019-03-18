@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Util.Helpers;
 
 namespace Util.Datas.Queries.Trees {
     /// <summary>
@@ -39,14 +41,27 @@ namespace Util.Datas.Queries.Trees {
         public bool? Enabled { get; set; }
 
         /// <summary>
-        /// 添加描述
+        /// 是否搜索
         /// </summary>
-        protected override void AddDescriptions() {
-            base.AddDescriptions();
-            AddDescription( "ParentId", ParentId );
-            AddDescription( "Level", Level );
-            AddDescription( "Path", Path );
-            AddDescription( "Enabled", Enabled );
+        public virtual bool IsSearch() {
+            var items = Reflection.GetPublicProperties( this );
+            return items.Any( t => IsSearchProperty( t.Text, t.Value ) );
+        }
+
+        /// <summary>
+        /// 是否搜索属性
+        /// </summary>
+        protected virtual bool IsSearchProperty( string name, object value ) {
+            if ( value.SafeString().IsEmpty() )
+                return false;
+            switch ( name.SafeString().ToLower() ) {
+                case "order":
+                case "pagesize":
+                case "page":
+                case "totalcount":
+                    return false;
+            }
+            return true;
         }
     }
 

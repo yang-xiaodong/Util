@@ -47,7 +47,7 @@ namespace Util.Properties {
         }
         
         /// <summary>
-        ///   使用此强类型资源类，为所有资源查找
+        ///   重写当前线程的 CurrentUICulture 属性
         ///   重写当前线程的 CurrentUICulture 属性。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -61,11 +61,47 @@ namespace Util.Properties {
         }
         
         /// <summary>
+        ///   查找类似 删除成功 的本地化字符串。
+        /// </summary>
+        public static string DeleteSuccess {
+            get {
+                return ResourceManager.GetString("DeleteSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 其他用户正在执行该操作,请稍后再试 的本地化字符串。
+        /// </summary>
+        public static string GlobalDuplicateRequest {
+            get {
+                return ResourceManager.GetString("GlobalDuplicateRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 操作成功 的本地化字符串。
+        /// </summary>
+        public static string Success {
+            get {
+                return ResourceManager.GetString("Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 系统忙，请稍后再试 的本地化字符串。
         /// </summary>
         public static string SystemError {
             get {
                 return ResourceManager.GetString("SystemError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 请不要重复提交 的本地化字符串。
+        /// </summary>
+        public static string UserDuplicateRequest {
+            get {
+                return ResourceManager.GetString("UserDuplicateRequest", resourceCulture);
             }
         }
     }

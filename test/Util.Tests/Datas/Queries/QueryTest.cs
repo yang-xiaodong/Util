@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Text;
 using Util.Datas.Queries;
 using Util.Datas.Queries.Criterias;
+using Util.Properties;
 using Util.Tests.Samples;
 using Util.Tests.XUnitHelpers;
 using Xunit;
@@ -110,12 +111,12 @@ namespace Util.Tests.Datas.Queries {
         /// <summary>
         /// 测试添加查询条件 - 同时添加2个查询条件，抛出异常
         /// </summary>
-        //[Fact]
-        //public void TestWhereIfNotEmpty_2Condition_Throw() {
-        //    AssertHelper.Throws<InvalidOperationException>( () => {
-        //        _query.WhereIfNotEmpty( t => t.Name == "A" && t.Tel == 1 );
-        //    }, string.Format( LibraryResource.OnlyOnePredicate, "t => ((t.Name == \"A\") AndAlso (t.Tel == 1))" ) );
-        //}
+        [Fact]
+        public void TestWhereIfNotEmpty_2Condition_Throw() {
+            AssertHelper.Throws<InvalidOperationException>( () => {
+                _query.WhereIfNotEmpty( t => t.Name == "A" && t.Tel == 1 );
+            }, string.Format( LibraryResource.OnlyOnePredicate, "t => ((t.Name == \"A\") AndAlso (t.Tel == 1))" ) );
+        }
 
         /// <summary>
         /// 添加范围查询条件 - 整型
@@ -152,8 +153,8 @@ namespace Util.Tests.Datas.Queries {
             var min = DateTime.Parse( "2000-1-1 10:10:10" );
             var max = DateTime.Parse( "2000-1-2 10:10:10" );
             var result = new StringBuilder();
-            result.AppendFormat( "t => ((t.DateValue >= {0})", DateTime.Parse( "2000/1/1 0:00:00" ) );
-            result.AppendFormat( " AndAlso (t.DateValue < {0}))", DateTime.Parse( "2000/1/3 0:00:00" ) );
+            result.Append( "t => ((t.DateValue >= Convert(Parse(\"2000/1/1 0:00:00\"), DateTime))" );
+            result.Append( " AndAlso (t.DateValue < Convert(Parse(\"2000/1/3 0:00:00\"), DateTime)))" );
 
             _query.Between( t => t.DateValue, min, max, false );
             Assert.Equal( result.ToString(), _query.GetPredicate().ToString() );
@@ -167,8 +168,8 @@ namespace Util.Tests.Datas.Queries {
             var min = DateTime.Parse( "2000-1-1 10:10:10" );
             var max = DateTime.Parse( "2000-1-2 10:10:10" );
             var result = new StringBuilder();
-            result.AppendFormat( "t => ((t.DateValue >= {0})", DateTime.Parse( "2000/1/1 10:10:10" ) );
-            result.AppendFormat( " AndAlso (t.DateValue <= {0}))", DateTime.Parse( "2000/1/2 10:10:10" ) );
+            result.Append( "t => ((t.DateValue >= Convert(Parse(\"2000/1/1 10:10:10\"), DateTime))" );
+            result.Append( " AndAlso (t.DateValue <= Convert(Parse(\"2000/1/2 10:10:10\"), DateTime)))" );
 
             _query.Between( t => t.DateValue, min, max );
             Assert.Equal( result.ToString(), _query.GetPredicate().ToString() );
@@ -236,6 +237,15 @@ namespace Util.Tests.Datas.Queries {
             var query = new Query<AggregateRootSample>();
             query.Where( t => t.Tel == 1 );
             _query.Or( query );
+            Assert.Equal( "t => ((t.Name == \"A\") OrElse (t.Tel == 1))", _query.GetPredicate().ToString() );
+        }
+
+        /// <summary>
+        /// 测试或连接
+        /// </summary>
+        [Fact]
+        public void TestOr_2() {
+            _query.Or( t => t.Name == "A", t => t.Name == "", t => t.Tel == 1 );
             Assert.Equal( "t => ((t.Name == \"A\") OrElse (t.Tel == 1))", _query.GetPredicate().ToString() );
         }
 

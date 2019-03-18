@@ -21,11 +21,11 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Util;
 using Util.Domains;
-using Util.Domains.Auditing;
 using Util.Domains.Trees;
+using Util.Domains.Auditing;
 using Util.Domains.Tenants;
 
-namespace <%= Entity.GetNamespace(Namespace,"Domains","Models") %> {
+namespace <%= Entity.GetNamespace(Namespace,"Domain","Models") %> {
     /// <summary>
     /// <%= Description %>
     /// </summary>
@@ -64,17 +64,12 @@ namespace <%= Entity.GetNamespace(Namespace,"Domains","Models") %> {
         public <%= p.TypeName %> <%= p.PropertyName.ToSafeName() %> { get; set; }
         <% }%>
         <% foreach(var r in Entity.Relationships) { %>
-        
-        <% if(r.ThisCardinality == Cardinality.Many) { %>
-        /// <summary>
-        /// <%= Entity.GetOtherDescription( r.OtherEntity ) %>列表
-        /// </summary>
-        public virtual ICollection<<%= r.OtherEntity.ToSafeName() %>> <%= r.ThisPropertyName.ToSafeName() %> { get; set; }
-        <% } else { %>
+        <% if(r.ThisCardinality != Cardinality.Many) { %>
         /// <summary>
         /// <%= Entity.GetOtherDescription( r.OtherEntity ) %>
         /// </summary>
-        public virtual <%= r.OtherEntity.ToSafeName() %> <%= r.ThisPropertyName.ToSafeName() %> { get; set; }
+        [ForeignKey( "<%=Entity.GetOtherIdProperty( r.OtherEntity )%>" )]
+        public <%= r.OtherEntity.ToSafeName() %> <%= r.ThisPropertyName.ToSafeName() %> { get; set; }
         <% } %>
         <% }%>
         
@@ -86,23 +81,23 @@ namespace <%= Entity.GetNamespace(Namespace,"Domains","Models") %> {
             <% if( p.ColumnName == "Version" && p.DataType == DbType.Binary ) continue;%>
             <% if( p.ColumnName == "IsDeleted" && p.DataType == DbType.Boolean ) continue;%>
             <% if( p.IsPrimaryKey.Value ){ %>
-            AddDescription( "<%=p.Description %>", Id );
+            AddDescription( t => t.Id );
             <% continue;} %>
-            AddDescription( "<%=p.Description %>", <%= p.PropertyName.ToSafeName() %><%= p.ShowDescription() %> );
+            AddDescription( t => t.<%= p.PropertyName.ToSafeName() %> );
             <% } %>
         }
         
         /// <summary>
         /// 添加变更列表
         /// </summary>
-        protected override void AddChanges( <%= SafeClassName %> newEntity ) {
+        protected override void AddChanges( <%= SafeClassName %> other ) {
             <% foreach(Property p in Entity.Properties) { %>
             <% if( p.ColumnName == "Version" && p.DataType == DbType.Binary ) continue;%>
             <% if( p.ColumnName == "IsDeleted" && p.DataType == DbType.Boolean ) continue;%>
             <% if( p.IsPrimaryKey.Value ){ %>
-            AddChange( "Id", "<%=p.Description %>", Id, newEntity.Id );            
+            AddChange( t => t.Id, other.Id );
             <%continue; } %>
-            AddChange( "<%=p.ColumnName %>", "<%=p.Description %>", <%= p.PropertyName.ToSafeName() %>, newEntity.<%= p.PropertyName.ToSafeName() %> );
+            AddChange( t => t.<%= p.PropertyName.ToSafeName() %>, other.<%= p.PropertyName.ToSafeName() %> );
             <% } %>
         }
     }

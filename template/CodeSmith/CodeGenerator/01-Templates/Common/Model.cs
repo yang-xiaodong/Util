@@ -170,6 +170,14 @@ namespace SchemaMapper
         }
 
         /// <summary>
+        /// 获取导航属性标识列名
+        /// </summary>
+        public string GetOtherIdProperty(string name)
+        {
+            return Context.Entities.ByClass(name).GetId().ColumnName;
+        }
+
+        /// <summary>
         /// 获取属性集合,不包含Version属性
         /// </summary>
         public List<Property> GetProperties(bool isExcludeVersion = true)
@@ -422,7 +430,7 @@ namespace SchemaMapper
         {
             if (string.IsNullOrWhiteSpace(TableSchema) || TableSchema.ToLower().Trim() == "dbo")
                 return string.Format("{0}.{1}{2}", baseNamespace, layer, GetCategory(category));
-            return string.Format("{0}.{1}.{2}{3}", baseNamespace, layer, TableSchema, GetCategory(category));
+            return string.Format("{0}.{1}.{2}{3}", baseNamespace, TableSchema, layer, GetCategory(category));
         }
 
         /// <summary>
@@ -448,7 +456,7 @@ namespace SchemaMapper
         }
 
         /// <summary>
-        /// 是否表单隐藏属性
+        /// 是否隐藏
         /// </summary>
         /// <param name="property">属性</param>
         public bool IsHidden(Property property) {
@@ -672,6 +680,8 @@ namespace SchemaMapper
         private void ValidateRequired(List<string> result)
         {
             if (IsRequired == false)
+                return;
+            if (DataType == DbType.Boolean)
                 return;
             result.Add(string.Format("[Required(ErrorMessage = \"{0}不能为空\")]", Description));
         }

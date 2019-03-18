@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Util.Properties;
@@ -10,16 +10,19 @@ namespace Util.Exceptions {
     /// </summary>
     public class Warning : Exception {
         /// <summary>
-        /// 错误消息
-        /// </summary>
-        private readonly string _message;
-
-        /// <summary>
         /// 初始化应用程序异常
         /// </summary>
         /// <param name="message">错误消息</param>
         public Warning( string message )
-            : this( message, "" ) {
+            : this( message, null ) {
+        }
+
+        /// <summary>
+        /// 初始化应用程序异常
+        /// </summary>
+        /// <param name="exception">异常</param>
+        public Warning( Exception exception )
+            : this( null, null, exception ) {
         }
 
         /// <summary>
@@ -28,25 +31,7 @@ namespace Util.Exceptions {
         /// <param name="message">错误消息</param>
         /// <param name="code">错误码</param>
         public Warning( string message, string code )
-            : this( message, code, LogLevel.Warning ) {
-        }
-
-        /// <summary>
-        /// 初始化应用程序异常
-        /// </summary>
-        /// <param name="message">错误消息</param>
-        /// <param name="code">错误码</param>
-        /// <param name="level">日志级别</param>
-        public Warning( string message, string code, LogLevel level )
-            : this( message, code, level, null ) {
-        }
-
-        /// <summary>
-        /// 初始化应用程序异常
-        /// </summary>
-        /// <param name="exception">异常</param>
-        public Warning( Exception exception )
-            : this( "", "", LogLevel.Warning, exception ) {
+            : this( message, code, null ) {
         }
 
         /// <summary>
@@ -56,77 +41,8 @@ namespace Util.Exceptions {
         /// <param name="code">错误码</param>
         /// <param name="exception">异常</param>
         public Warning( string message, string code, Exception exception )
-            : this( message, code, LogLevel.Warning, exception ) {
-        }
-
-        /// <summary>
-        /// 初始化应用程序异常
-        /// </summary>
-        /// <param name="message">错误消息</param>
-        /// <param name="code">错误码</param>
-        /// <param name="level">日志级别</param>
-        /// <param name="exception">异常</param>
-        public Warning( string message, string code, LogLevel level, Exception exception )
             : base( message ?? "", exception ) {
             Code = code;
-            Level = level;
-            _message = GetMessage();
-        }
-
-        /// <summary>
-        /// 获取错误消息
-        /// </summary>
-        private string GetMessage() {
-            var result = new StringBuilder();
-            AppendSelfMessage( result );
-            AppendInnerMessage( result, InnerException );
-            return result.ToString().TrimEnd( Environment.NewLine.ToCharArray() );
-        }
-
-        /// <summary>
-        /// 添加外层异常消息
-        /// </summary>
-        private void AppendSelfMessage( StringBuilder result ) {
-            if( string.IsNullOrWhiteSpace( base.Message ) )
-                return;
-            result.AppendLine( base.Message );
-        }
-
-        /// <summary>
-        /// 添加内部异常消息
-        /// </summary>
-        private void AppendInnerMessage( StringBuilder result, Exception exception ) {
-            if( exception == null )
-                return;
-            if( exception is Warning ) {
-                result.AppendLine( exception.Message );
-                return;
-            }
-            result.AppendLine( exception.Message );
-            AppendData( result, exception );
-            AppendInnerMessage( result, exception.InnerException );
-        }
-
-        /// <summary>
-        /// 添加额外数据
-        /// </summary>
-        private void AppendData( StringBuilder result, Exception ex ) {
-            foreach( DictionaryEntry data in ex.Data )
-                result.AppendFormat( "{0}:{1}{2}", data.Key, data.Value, Environment.NewLine );
-        }
-
-        /// <summary>
-        /// 错误消息
-        /// </summary>
-        public override string Message {
-            get {
-                if( Data.Count == 0 )
-                    return _message;
-                StringBuilder result = new StringBuilder();
-                result.AppendLine( _message );
-                AppendData( result, this );
-                return result.ToString();
-            }
         }
 
         /// <summary>
@@ -135,28 +51,65 @@ namespace Util.Exceptions {
         public string Code { get; set; }
 
         /// <summary>
-        /// 日志级别
+        /// 获取错误消息
         /// </summary>
-        public LogLevel Level { get; set; }
+        public string GetMessage() {
+            return GetMessage( this );
+        }
 
         /// <summary>
-        /// 堆栈跟踪
+        /// 获取错误消息
         /// </summary>
-        public override string StackTrace {
-            get {
-                if( !string.IsNullOrWhiteSpace( base.StackTrace ) )
-                    return base.StackTrace;
-                if( base.InnerException == null )
-                    return string.Empty;
-                return base.InnerException.StackTrace;
-            }
+        public static string GetMessage( Exception ex ) {
+            var result = new StringBuilder();
+            var list = GetExceptions( ex );
+            foreach( var exception in list )
+                AppendMessage( result, exception );
+            return result.ToString().RemoveEnd( Environment.NewLine );
+        }
+
+        /// <summary>
+        /// 添加异常消息
+        /// </summary>
+        private static void AppendMessage( StringBuilder result, Exception exception ) {
+            if( exception == null )
+                return;
+            result.AppendLine( exception.Message );
+        }
+
+        /// <summary>
+        /// 获取异常列表
+        /// </summary>
+        public IList<Exception> GetExceptions() {
+            return GetExceptions( this );
+        }
+
+        /// <summary>
+        /// 获取异常列表
+        /// </summary>
+        /// <param name="ex">异常</param>
+        public static IList<Exception> GetExceptions( Exception ex ) {
+            var result = new List<Exception>();
+            AddException( result, ex );
+            return result;
+        }
+
+        /// <summary>
+        /// 添加内部异常
+        /// </summary>
+        private static void AddException( List<Exception> result, Exception exception ) {
+            if( exception == null )
+                return;
+            result.Add( exception );
+            AddException( result, exception.InnerException );
         }
 
         /// <summary>
         /// 获取友情提示
         /// </summary>
-        public string GetPrompt() {
-            if( Level == LogLevel.Error )
+        /// <param name="level">日志级别</param>
+        public string GetPrompt( LogLevel level ) {
+            if( level == LogLevel.Error )
                 return R.SystemError;
             return Message;
         }
